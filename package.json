@@ -18,9 +18,10 @@
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^7.1.4"
+    "electron": "^7.1.4",
+    "webpack": "^4.41.2"
   },
   "dependencies": {
-    "webpack": "^4.41.2"
+    "dexie": "^2.0.4"
   }
 }
