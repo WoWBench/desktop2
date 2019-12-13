@@ -2,6 +2,12 @@
 
 **Use this app along with the [Electron API Demos](https://electronjs.org/#get-started) app for API code examples to help you get started.**
 
+| File        | Node? | Description |
+|-------------|-------|-------------|
+| preload.js  | yes   | ?           |
+| main.js     | yes   | Starts the app and creates browser window, main process |
+| renderer.js | no    |             |
+
 A basic Electron application needs just these files:
 
 - `package.json` - Points to the app's main file and lists its details and dependencies.
