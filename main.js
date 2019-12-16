@@ -1,11 +1,17 @@
 const path = require('path')
 const os = require('os')
-const reactDevToolsHash = 'fmkadmapgofadopljbjfkapdkoienihi'
-const reactDevToolsVersion = '4.2.1_0'
-import Git from 'nodegit'
+const fs = require('fs')
 
 // Modules to control application life and create native browser window
 const {app, BrowserWindow} = require('electron')
+
+const reactDevToolsHash = 'fmkadmapgofadopljbjfkapdkoienihi'
+const reactDevToolsVersion = '4.2.1_0'
+
+// TODO: Replace with a store?
+let settings = {
+  addonsFolder: '/Users/david.craig/Personal/wow/_classic_/Interface/Addons'
+}
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -40,6 +46,11 @@ function createWindow () {
     // when you should delete the corresponding element.
     mainWindow = null
   })
+
+  // If we have an addons folder scan it for addons
+  if (typeof settings.addonsFolder !== 'undefined' && settings.addonsFolder !== '') {
+    console.log(parseAddonVersions())
+  }
 }
 
 // This method will be called when Electron has finished
@@ -63,8 +74,48 @@ app.on('activate', function () {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 function getGitVersion(folder) {
-  Git.Repository.open(folder)
-  .then((repo) => {
-    return repo.getReference();
+}
+
+function getAddonFolders() {
+  return fs.readdirSync(settings.addonsFolder, { withFileTypes: true })
+    .filter(dirent => dirent.isDirectory())
+    .map(dirent => dirent.name)
+}
+
+function getAddonFolder(addonName) {
+  return `${settings.addonsFolder}/${addonName}`
+}
+
+function parseAddonVersions() {
+  let folders = getAddonFolders();
+
+  return folders.map(addon => {
+    return parseToc(addon)
   })
 }
+
+function parseToc(addon) {
+  let addonFolder = getAddonFolder(addon)
+  let slug = addon.toLowerCase()
+  let tocData = {}
+  let tocPath = `${addonFolder}/${slug}.toc`
+  console.log(tocPath)
+
+  try {
+    tocContents = fs.readFileSync(tocPath, 'utf8')
+    tocData.title = getTitle(addon, tocContents)
+  } catch {}
+
+  return tocData
+}
+
+function getTocValue(field, toc, defaultvalue = '') {
+  let fieldMatcher = `## ${field}: (.+)`
+  let fieldReplace = `## ${field}: `
+  let regex = new RegExp(fieldMatcher, 'gm')
+
+  return toc.match(regex)[0].replace(fieldReplace, '') || defaultvalue
+}
+
+getTitle = (addon, toc) => { return getTocValue('Title', toc, addon) }
+getAuthor = (addon, toc) => { return getTocValue('Author', toc) }
