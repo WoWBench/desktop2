@@ -2,6 +2,7 @@ const path = require('path')
 const os = require('os')
 const reactDevToolsHash = 'fmkadmapgofadopljbjfkapdkoienihi'
 const reactDevToolsVersion = '4.2.1_0'
+import Git from 'nodegit'
 
 // Modules to control application life and create native browser window
 const {app, BrowserWindow} = require('electron')
@@ -61,3 +62,9 @@ app.on('activate', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+function getGitVersion(folder) {
+  Git.Repository.open(folder)
+  .then((repo) => {
+    return repo.getReference();
+  })
+}
