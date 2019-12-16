@@ -1,16 +1,26 @@
+const path = require('path')
+const os = require('os')
+const reactDevToolsHash = 'fmkadmapgofadopljbjfkapdkoienihi'
+const reactDevToolsVersion = '4.2.1_0'
+
 // Modules to control application life and create native browser window
 const {app, BrowserWindow} = require('electron')
-const path = require('path')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
 function createWindow () {
+  // Attempt to load react dev tools extension
+  BrowserWindow.addDevToolsExtension(
+    path.join(os.homedir(), `/Library/Application Support/Google/Chrome/Default/Extensions/${reactDevToolsHash}/${reactDevToolsVersion}`)
+ )
+
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    nodeIntegration: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
@@ -20,7 +30,7 @@ function createWindow () {
   mainWindow.loadFile('index.html')
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
