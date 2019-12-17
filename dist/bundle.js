@@ -155,6 +155,34 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./src/actions/app.js":
+/*!****************************!*\
+  !*** ./src/actions/app.js ***!
+  \****************************/
+/*! exports provided: setInstallationFolder, setAddonsStatus */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setInstallationFolder", function() { return setInstallationFolder; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setAddonsStatus", function() { return setAddonsStatus; });
+var SET_INSTALLATION_FOLDER = 'SET_INSTALLATION_FOLDER';
+var SET_ADDONS_STATUS = 'SET_ADDONS_STATUS';
+function setInstallationFolder(folder) {
+  return {
+    type: SET_INSTALLATION_FOLDER,
+    payload: folder
+  };
+}
+function setAddonsStatus(addons) {
+  return {
+    type: SET_ADDONS_STATUS,
+    payload: addons
+  };
+}
+
+/***/ }),
+
 /***/ "./src/app.js":
 /*!********************!*\
   !*** ./src/app.js ***!
@@ -168,14 +196,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _components_Navbar__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/Navbar */ "./src/components/Navbar.jsx");
-/* harmony import */ var _components_App__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/App */ "./src/components/App.jsx");
+/* harmony import */ var _components_App__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/App */ "./src/components/App.jsx");
+/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
+/* harmony import */ var _stores_app__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./stores/app */ "./src/stores/app.js");
+/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! electron */ "electron");
+/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(electron__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _actions_app__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./actions/app */ "./src/actions/app.js");
 
 
 
 
-console.log('loading react');
-react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_App__WEBPACK_IMPORTED_MODULE_3__["default"], null), document.getElementById('app'));
+
+
+
+react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_redux__WEBPACK_IMPORTED_MODULE_3__["Provider"], {
+  store: _stores_app__WEBPACK_IMPORTED_MODULE_4__["default"]
+}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_App__WEBPACK_IMPORTED_MODULE_2__["default"], null)), document.getElementById('app'));
+electron__WEBPACK_IMPORTED_MODULE_5___default.a.ipcRenderer.on('get-addons', function (event, addons) {
+  console.log(addons);
+  _stores_app__WEBPACK_IMPORTED_MODULE_4__["default"].dispatch(_actions_app__WEBPACK_IMPORTED_MODULE_6__["setAddonsStatus"], addons);
+});
+electron__WEBPACK_IMPORTED_MODULE_5___default.a.ipcRenderer.send('get-addons', {});
 
 /***/ }),
 
@@ -236,60 +277,49 @@ function (_React$Component) {
 
 /***/ }),
 
-/***/ "./src/components/Navbar.jsx":
-/*!***********************************!*\
-  !*** ./src/components/Navbar.jsx ***!
-  \***********************************/
+/***/ "./src/stores/app.js":
+/*!***************************!*\
+  !*** ./src/stores/app.js ***!
+  \***************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Navbar; });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/redux.js");
 
 
+function appStore() {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var action = arguments.length > 1 ? arguments[1] : undefined;
 
-var Navbar =
-/*#__PURE__*/
-function (_React$Component) {
-  _inherits(Navbar, _React$Component);
+  switch (action.type) {
+    case 'SET_ADDONS_STATUS':
+      state.addons = action.addons;
+      return state;
 
-  function Navbar() {
-    _classCallCheck(this, Navbar);
+    case 'SET_INSTALLATION_FOLDER':
+      state.installation_folder = action.folder;
+      return state;
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(Navbar).apply(this, arguments));
+    default:
+      return state;
   }
+}
 
-  _createClass(Navbar, [{
-    key: "render",
-    value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "Hello, ", this.props.name);
-    }
-  }]);
+var store = Object(redux__WEBPACK_IMPORTED_MODULE_0__["createStore"])(appStore);
+/* harmony default export */ __webpack_exports__["default"] = (store);
 
-  return Navbar;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
+/***/ }),
 
+/***/ "electron":
+/*!***************************!*\
+  !*** external "electron" ***!
+  \***************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
 
+module.exports = require("electron");
 
 /***/ })
 

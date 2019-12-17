@@ -3,7 +3,7 @@ const os = require('os')
 const fs = require('fs')
 
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 
 const reactDevToolsHash = 'fmkadmapgofadopljbjfkapdkoienihi'
 const reactDevToolsVersion = '4.2.1_0'
@@ -27,9 +27,9 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    nodeIntegration: true,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true,
     }
   })
 
@@ -46,11 +46,6 @@ function createWindow () {
     // when you should delete the corresponding element.
     mainWindow = null
   })
-
-  // If we have an addons folder scan it for addons
-  if (typeof settings.addonsFolder !== 'undefined' && settings.addonsFolder !== '') {
-    console.log(parseAddonVersions())
-  }
 }
 
 // This method will be called when Electron has finished
@@ -71,11 +66,16 @@ app.on('activate', function () {
   if (mainWindow === null) createWindow()
 })
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
-function getGitVersion(folder) {
+function isGitAddon(addon) {
+
 }
 
+// In this file you can include the rest of your app's specific main process
+// code. You can also put them in separate files and require them here.
+function getGitVersion(addon) {
+}
+
+// Gets a list of all addon folders
 function getAddonFolders() {
   return fs.readdirSync(settings.addonsFolder, { withFileTypes: true })
     .filter(dirent => dirent.isDirectory())
@@ -86,7 +86,7 @@ function getAddonFolder(addonName) {
   return `${settings.addonsFolder}/${addonName}`
 }
 
-function parseAddonVersions() {
+function parseAddons() {
   let folders = getAddonFolders();
 
   return folders.map(addon => {
@@ -119,3 +119,12 @@ function getTocValue(field, toc, defaultvalue = '') {
 
 getTitle = (addon, toc) => { return getTocValue('Title', toc, addon) }
 getAuthor = (addon, toc) => { return getTocValue('Author', toc) }
+
+ipcMain.on('get-addons', (event, arg) => {
+  // If we have an addons folder scan it for addons
+  if (typeof settings.addonsFolder !== 'undefined' && settings.addonsFolder !== '') {
+    let addonData = parseAddons()
+    // console.log(addonData)
+    event.reply('get-addons', addonData)
+  }
+})
