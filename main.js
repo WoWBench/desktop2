@@ -90,10 +90,15 @@ function parseAddons() {
   let folders = getAddonFolders();
 
   return folders.map(addon => {
-    return parseToc(addon)
+    let toc = parseToc(addon)
+    return { toc }
   })
 }
 
+/**
+ * Parse the metadata out of the toc file.
+ * @param {string} addon 
+ */
 function parseToc(addon) {
   let addonFolder = getAddonFolder(addon)
   let slug = addon.toLowerCase()
@@ -103,6 +108,8 @@ function parseToc(addon) {
   try {
     tocContents = fs.readFileSync(tocPath, 'utf8')
     tocData.title = getTitle(addon, tocContents)
+    tocData.version = getVersion(addon, tocContents)
+    tocData.author = getAuthor(addon, tocContents)
   } catch {}
 
   return tocData
@@ -117,6 +124,7 @@ function getTocValue(field, toc, defaultvalue = '') {
 }
 
 getTitle = (addon, toc) => { return getTocValue('Title', toc, addon) }
+getVersion = (addon, toc) => { return getTocValue('Version', toc, addon) }
 getAuthor = (addon, toc) => { return getTocValue('Author', toc) }
 
 ipcMain.on('get-addons', (event, arg) => {
