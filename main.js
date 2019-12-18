@@ -99,7 +99,6 @@ function parseToc(addon) {
   let slug = addon.toLowerCase()
   let tocData = {}
   let tocPath = `${addonFolder}/${slug}.toc`
-  console.log(tocPath)
 
   try {
     tocContents = fs.readFileSync(tocPath, 'utf8')

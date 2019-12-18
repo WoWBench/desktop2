@@ -4,6 +4,7 @@ module.exports = {
   entry: './src/app.js',
   mode: 'development',
   devtool: 'cheap-module-source-map',
+  watch: true,
   module: {
     rules: [
       {

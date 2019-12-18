@@ -15,10 +15,7 @@ ReactDOM.render(
 )
 
 electron.ipcRenderer.on('get-addons', (event, addons) => {
-  
-
-  console.log(addons)
-  store.dispatch(setAddonsStatus, addons)
+  store.dispatch(setAddonsStatus(addons))
 })
 
 electron.ipcRenderer.send('get-addons', {})
