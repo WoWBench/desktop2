@@ -3,6 +3,7 @@ const os = require('os')
 const fs = require('fs')
 const { Addon } = require('./src/mainjs/addon')
 const { TocParser } = require('./src/mainjs/tocparser')
+const { GitParser } = require('./src/mainjs/gitparser')
 
 // Modules to control application life and create native browser window
 const { app, BrowserWindow, ipcMain } = require('electron')
@@ -68,15 +69,6 @@ app.on('activate', function () {
   if (mainWindow === null) createWindow()
 })
 
-function isGitAddon(addon) {
-
-}
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
-function getGitVersion(addon) {
-}
-
 // Gets a list of all addon folders
 function getAddonFolders() {
   return fs.readdirSync(config.addonsFolder, { withFileTypes: true })
@@ -89,23 +81,22 @@ function parseAddons() {
 
   return folders.map((a) => {
     let addon = new Addon(a, config)
+    /* Parsers */
     let tocParser = new TocParser(addon)
+    let gitParser = new GitParser(addon)
 
+    // parse extra data
     tocParser.parse()
-    let git = parseGit(addon)
+    gitParser.parse()
+
     return addon
   })
-}
-
-function parseGit(addon) {
-
 }
 
 ipcMain.on('get-addons', (event, arg) => {
   // If we have an addons folder scan it for addons
   if (typeof config.addonsFolder !== 'undefined' && config.addonsFolder !== '') {
     let addonData = parseAddons()
-    // console.log(addonData)
     event.reply('get-addons', addonData)
   }
 })

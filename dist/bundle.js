@@ -327,8 +327,6 @@ function (_React$Component) {
   _createClass(AddonListing, [{
     key: "renderAddonRows",
     value: function renderAddonRows() {
-      console.log(this.props.addons);
-
       if (typeof this.props.addons !== 'undefined') {
         return this.props.addons.map(function (a) {
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Addon__WEBPACK_IMPORTED_MODULE_1__["default"], {

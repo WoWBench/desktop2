@@ -4,6 +4,11 @@ class Addon {
     this.base_folder = config.addonsFolder
     this.config = config
     this.toc = {}
+    this.git = false
+  }
+
+  getAddonTocPath () {
+    return `${this.getAddonFolder()}/${this.slug()}.toc`
   }
 
   getAddonFolder () {
@@ -16,6 +21,10 @@ class Addon {
 
   setToc (toc) {
     this.toc = toc
+  }
+
+  setGit (git) {
+    this.git = git
   }
 }
 

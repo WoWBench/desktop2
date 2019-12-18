@@ -8,8 +8,7 @@ class TocParser {
   }
 
   parse () {
-    let addonFolder = this.addon.getAddonFolder()
-    let tocPath = `${addonFolder}/${this.addon.slug()}.toc`
+    let tocPath = this.addon.getAddonTocPath()
 
     try {
       this.tocData = fs.readFileSync(tocPath, 'utf8')
