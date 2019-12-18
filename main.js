@@ -1,6 +1,8 @@
 const path = require('path')
 const os = require('os')
 const fs = require('fs')
+const { Addon } = require('./src/mainjs/addon')
+const { TocParser } = require('./src/mainjs/tocparser')
 
 // Modules to control application life and create native browser window
 const { app, BrowserWindow, ipcMain } = require('electron')
@@ -9,7 +11,7 @@ const reactDevToolsHash = 'fmkadmapgofadopljbjfkapdkoienihi'
 const reactDevToolsVersion = '4.2.1_0'
 
 // TODO: Replace with a store?
-let settings = {
+let config = {
   addonsFolder: '/Users/david.craig/Personal/wow/_classic_/Interface/Addons'
 }
 
@@ -77,59 +79,31 @@ function getGitVersion(addon) {
 
 // Gets a list of all addon folders
 function getAddonFolders() {
-  return fs.readdirSync(settings.addonsFolder, { withFileTypes: true })
+  return fs.readdirSync(config.addonsFolder, { withFileTypes: true })
     .filter(dirent => dirent.isDirectory())
     .map(dirent => dirent.name)
-}
-
-function getAddonFolder(addonName) {
-  return `${settings.addonsFolder}/${addonName}`
 }
 
 function parseAddons() {
   let folders = getAddonFolders();
 
-  return folders.map(addon => {
-    let toc = parseToc(addon)
-    return { toc }
+  return folders.map((a) => {
+    let addon = new Addon(a, config)
+    let tocParser = new TocParser(addon)
+
+    tocParser.parse()
+    let git = parseGit(addon)
+    return addon
   })
 }
 
-/**
- * Parse the metadata out of the toc file.
- * @param {string} addon 
- */
-function parseToc(addon) {
-  let addonFolder = getAddonFolder(addon)
-  let slug = addon.toLowerCase()
-  let tocData = {}
-  let tocPath = `${addonFolder}/${slug}.toc`
+function parseGit(addon) {
 
-  try {
-    tocContents = fs.readFileSync(tocPath, 'utf8')
-    tocData.title = getTitle(addon, tocContents)
-    tocData.version = getVersion(addon, tocContents)
-    tocData.author = getAuthor(addon, tocContents)
-  } catch {}
-
-  return tocData
 }
-
-function getTocValue(field, toc, defaultvalue = '') {
-  let fieldMatcher = `## ${field}: (.+)`
-  let fieldReplace = `## ${field}: `
-  let regex = new RegExp(fieldMatcher, 'gm')
-
-  return toc.match(regex)[0].replace(fieldReplace, '') || defaultvalue
-}
-
-getTitle = (addon, toc) => { return getTocValue('Title', toc, addon) }
-getVersion = (addon, toc) => { return getTocValue('Version', toc, addon) }
-getAuthor = (addon, toc) => { return getTocValue('Author', toc) }
 
 ipcMain.on('get-addons', (event, arg) => {
   // If we have an addons folder scan it for addons
-  if (typeof settings.addonsFolder !== 'undefined' && settings.addonsFolder !== '') {
+  if (typeof config.addonsFolder !== 'undefined' && config.addonsFolder !== '') {
     let addonData = parseAddons()
     // console.log(addonData)
     event.reply('get-addons', addonData)
