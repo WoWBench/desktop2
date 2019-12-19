@@ -1,15 +1,21 @@
 import * as React from 'react'
 import * as Types from '../actions/types/app'
 import { setInstallationFolder } from '../actions/app'
+import { connect } from 'react-redux'
 
 export class Install extends React.Component {
+  constructor () {
+    super ()
+    this.change = this.change.bind(this)
+  }
+
   change () {
     let sel = document.getElementById('directorySelector')
     let folder = sel.files[0].path
     if (folder.match(/.DS_Store/)) {
       folder = folder.replace('.DS_Store', '')
     }
-    console.log(folder)
+    this.props.selectFolder(folder)
   }
 
   render () {
@@ -22,3 +28,20 @@ export class Install extends React.Component {
     </>
   }
 }
+
+const mapState = state => ({
+  installation_folder: state.installation_folder
+})
+
+const mapDispatch = dispatch => {
+  return {
+    selectFolder: folder => {
+      dispatch(setInstallationFolder(folder))
+    }
+  }
+}
+
+export default connect(
+  mapState,
+  mapDispatch
+)(Install)

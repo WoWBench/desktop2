@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import Addon from './Addon'
 import AddonListing from './AddonListing'
 import Navbar from './Navbar'
-import { Install } from './Install'
+import Install from './Install'
 
 class App extends React.Component {
   content () {

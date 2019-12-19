@@ -442,7 +442,7 @@ function (_React$Component) {
         });
       }
 
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Install__WEBPACK_IMPORTED_MODULE_5__["Install"], null);
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Install__WEBPACK_IMPORTED_MODULE_5__["default"], null);
     }
   }, {
     key: "render",
@@ -477,7 +477,7 @@ var mapState = function mapState(state) {
 /*!************************************!*\
   !*** ./src/components/Install.jsx ***!
   \************************************/
-/*! exports provided: Install */
+/*! exports provided: Install, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -487,6 +487,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _actions_types_app__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../actions/types/app */ "./src/actions/types/app.js");
 /* harmony import */ var _actions_app__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../actions/app */ "./src/actions/app.js");
+/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -497,13 +498,14 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -514,9 +516,13 @@ function (_React$Component) {
   _inherits(Install, _React$Component);
 
   function Install() {
+    var _this;
+
     _classCallCheck(this, Install);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(Install).apply(this, arguments));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Install).call(this));
+    _this.change = _this.change.bind(_assertThisInitialized(_this));
+    return _this;
   }
 
   _createClass(Install, [{
@@ -529,7 +535,7 @@ function (_React$Component) {
         folder = folder.replace('.DS_Store', '');
       }
 
-      console.log(folder);
+      this.props.selectFolder(folder);
     }
   }, {
     key: "render",
@@ -546,6 +552,22 @@ function (_React$Component) {
 
   return Install;
 }(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
+
+var mapState = function mapState(state) {
+  return {
+    installation_folder: state.installation_folder
+  };
+};
+
+var mapDispatch = function mapDispatch(dispatch) {
+  return {
+    selectFolder: function selectFolder(folder) {
+      dispatch(Object(_actions_app__WEBPACK_IMPORTED_MODULE_2__["setInstallationFolder"])(folder));
+    }
+  };
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (Object(react_redux__WEBPACK_IMPORTED_MODULE_3__["connect"])(mapState, mapDispatch)(Install));
 
 /***/ }),
 
