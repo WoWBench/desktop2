@@ -1,4 +1,5 @@
 import { createStore } from 'redux'
+import electron from 'electron'
 
 function appStore(state = {}, action) {
   switch (action.type) {
@@ -7,6 +8,7 @@ function appStore(state = {}, action) {
         addons: action.payload
       })
     case 'SET_INSTALLATION_FOLDER':
+      electron.ipcRenderer.send('set-wow-folder', action.payload)
       return Object.assign({}, state, {
         installation_folder: action.payload
       })

@@ -13,7 +13,7 @@ const reactDevToolsVersion = '4.2.1_0'
 
 // TODO: Replace with a store?
 let config = {
-  addonsFolder: '/Users/david.craig/Personal/wow/_classic_/Interface/Addons'
+  addonsFolder: null
 }
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -71,32 +71,77 @@ app.on('activate', function () {
 
 // Gets a list of all addon folders
 function getAddonFolders() {
-  return fs.readdirSync(config.addonsFolder, { withFileTypes: true })
+  let classic = []
+  let retail = []
+
+  try {
+    classic = fs.readdirSync(`${config.addonsFolder}/_classic_/Interface/Addons`, { withFileTypes: true })
+      .filter(dirent => dirent.isDirectory())
+      .map(dirent => dirent.name)
+  } catch {
+    classic = null
+  }
+
+  try {
+    retail = fs.readdirSync(`${config.addonsFolder}/_retail_/Interface/Addons`, { withFileTypes: true })
     .filter(dirent => dirent.isDirectory())
     .map(dirent => dirent.name)
+  } catch {
+    retail = null
+  }
+
+  return {
+    classic,
+    retail
+  }
 }
 
 function parseAddons() {
   let folders = getAddonFolders();
 
-  return folders.map((a) => {
-    let addon = new Addon(a, config)
-    /* Parsers */
-    let tocParser = new TocParser(addon)
-    let gitParser = new GitParser(addon)
+  let classic = parseAddonsForFolder(folders.classic, '_classic_')
+  let retail = parseAddonsForFolder(folders.retail, '_retail_')
 
-    // parse extra data
-    tocParser.parse()
-    gitParser.parse()
+  // Classic
+  return {
+    classic,
+    retail
+  }
+}
 
-    return addon
-  })
+function parseAddonsForFolder (folders, game) {
+  try {
+    return folders.map((a) => {
+      config.game = game
+      let addon = new Addon(a, config)
+      /* Parsers */
+      let tocParser = new TocParser(addon)
+      let gitParser = new GitParser(addon)
+  
+      // parse extra data
+      tocParser.parse()
+      gitParser.parse()
+  
+      return addon
+    })
+  } catch {
+    return []
+  }
 }
 
 ipcMain.on('get-addons', (event, arg) => {
   // If we have an addons folder scan it for addons
-  if (typeof config.addonsFolder !== 'undefined' && config.addonsFolder !== '') {
+  if (typeof config.addonsFolder !== 'undefined' && config.addonsFolder !== '' && config.addonsFolder !== null) {
     let addonData = parseAddons()
+    console.log(addonData)
     event.reply('get-addons', addonData)
   }
+})
+
+ipcMain.on('set-wow-folder', (event, arg) => {
+  console.log(arg)
+  config.addonsFolder = arg
+
+  let addonData = parseAddons()
+  event.reply('get-addons', addonData)
 })

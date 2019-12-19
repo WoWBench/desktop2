@@ -7,7 +7,8 @@ import Install from './Install'
 
 class App extends React.Component {
   content () {
-    if (typeof this.props.installation_folder !== "undefined" && this.props.installation_folder !== '') {
+    let folder = this.props.installation_folder
+    if (typeof folder !== "undefined" && folder !== '') {
       return <AddonListing addons={this.props.addons} />
     }
     return <Install />
@@ -23,7 +24,7 @@ class App extends React.Component {
   }
 
   componentDidMount () {
-    console.log('react has mounted app')
+    // TODO: Add dexie local storage retrieval here.
   }
 }
 

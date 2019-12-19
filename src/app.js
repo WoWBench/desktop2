@@ -16,6 +16,7 @@ ReactDOM.render(
   document.getElementById('app')
 )
 
+// When we get the addons back from node, send them to our redux store.
 electron.ipcRenderer.on('get-addons', (event, addons) => {
   store.dispatch(setAddonsStatus(addons))
 })

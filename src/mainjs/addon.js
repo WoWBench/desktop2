@@ -12,7 +12,7 @@ class Addon {
   }
 
   getAddonFolder () {
-    return `${this.base_folder}/${this.folder}`
+    return `${this.base_folder}/${this.config.game}/Interface/Addons/${this.folder}`
   }
 
   slug () {

@@ -237,7 +237,8 @@ var APP_VERSION = '0.0.1';
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_redux__WEBPACK_IMPORTED_MODULE_3__["Provider"], {
   store: _stores_app__WEBPACK_IMPORTED_MODULE_4__["default"],
   electron: electron__WEBPACK_IMPORTED_MODULE_5___default.a
-}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_App__WEBPACK_IMPORTED_MODULE_2__["default"], null)), document.getElementById('app'));
+}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_App__WEBPACK_IMPORTED_MODULE_2__["default"], null)), document.getElementById('app')); // When we get the addons back from node, send them to our redux store.
+
 electron__WEBPACK_IMPORTED_MODULE_5___default.a.ipcRenderer.on('get-addons', function (event, addons) {
   _stores_app__WEBPACK_IMPORTED_MODULE_4__["default"].dispatch(Object(_actions_app__WEBPACK_IMPORTED_MODULE_6__["setAddonsStatus"])(addons));
 }); // When app loads send the request to get addon information.
@@ -355,7 +356,7 @@ function (_React$Component) {
     key: "renderAddonRows",
     value: function renderAddonRows() {
       if (typeof this.props.addons !== 'undefined') {
-        return this.props.addons.map(function (a) {
+        return this.props.addons.classic.map(function (a) {
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Addon__WEBPACK_IMPORTED_MODULE_1__["default"], {
             addon: a,
             key: a.toc.title
@@ -436,7 +437,9 @@ function (_React$Component) {
   _createClass(App, [{
     key: "content",
     value: function content() {
-      if (typeof this.props.installation_folder !== "undefined" && this.props.installation_folder !== '') {
+      var folder = this.props.installation_folder;
+
+      if (typeof folder !== "undefined" && folder !== '') {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_AddonListing__WEBPACK_IMPORTED_MODULE_3__["default"], {
           addons: this.props.addons
         });
@@ -453,8 +456,7 @@ function (_React$Component) {
     }
   }, {
     key: "componentDidMount",
-    value: function componentDidMount() {
-      console.log('react has mounted app');
+    value: function componentDidMount() {// TODO: Add dexie local storage retrieval here.
     }
   }]);
 
@@ -696,6 +698,9 @@ function (_React$Component) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/redux.js");
+/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! electron */ "electron");
+/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(electron__WEBPACK_IMPORTED_MODULE_1__);
+
 
 
 function appStore() {
@@ -709,6 +714,7 @@ function appStore() {
       });
 
     case 'SET_INSTALLATION_FOLDER':
+      electron__WEBPACK_IMPORTED_MODULE_1___default.a.ipcRenderer.send('set-wow-folder', action.payload);
       return Object.assign({}, state, {
         installation_folder: action.payload
       });
