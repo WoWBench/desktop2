@@ -166,20 +166,44 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setInstallationFolder", function() { return setInstallationFolder; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setAddonsStatus", function() { return setAddonsStatus; });
-var SET_INSTALLATION_FOLDER = 'SET_INSTALLATION_FOLDER';
-var SET_ADDONS_STATUS = 'SET_ADDONS_STATUS';
+/* harmony import */ var _types_app__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./types/app */ "./src/actions/types/app.js");
+
 function setInstallationFolder(folder) {
   return {
-    type: SET_INSTALLATION_FOLDER,
+    type: _types_app__WEBPACK_IMPORTED_MODULE_0__["SET_INSTALLATION_FOLDER"],
     payload: folder
   };
 }
 function setAddonsStatus(addons) {
   return {
-    type: SET_ADDONS_STATUS,
+    type: _types_app__WEBPACK_IMPORTED_MODULE_0__["SET_ADDONS_STATUS"],
     payload: addons
   };
 }
+
+/***/ }),
+
+/***/ "./src/actions/types/app.js":
+/*!**********************************!*\
+  !*** ./src/actions/types/app.js ***!
+  \**********************************/
+/*! exports provided: SET_INSTALLATION_FOLDER, SET_ADDONS_STATUS */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_INSTALLATION_FOLDER", function() { return SET_INSTALLATION_FOLDER; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SET_ADDONS_STATUS", function() { return SET_ADDONS_STATUS; });
+/**
+ * Set the installation path of the main wow instance.
+ */
+var SET_INSTALLATION_FOLDER = 'SET_INSTALLATION_FOLDER';
+/**
+ * Set the status of all addons (such as name, version, author, etc)
+ * Reads from TOC and GIT
+ */
+
+var SET_ADDONS_STATUS = 'SET_ADDONS_STATUS';
 
 /***/ }),
 
@@ -209,12 +233,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+var APP_VERSION = '0.0.1';
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_redux__WEBPACK_IMPORTED_MODULE_3__["Provider"], {
-  store: _stores_app__WEBPACK_IMPORTED_MODULE_4__["default"]
+  store: _stores_app__WEBPACK_IMPORTED_MODULE_4__["default"],
+  electron: electron__WEBPACK_IMPORTED_MODULE_5___default.a
 }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_App__WEBPACK_IMPORTED_MODULE_2__["default"], null)), document.getElementById('app'));
 electron__WEBPACK_IMPORTED_MODULE_5___default.a.ipcRenderer.on('get-addons', function (event, addons) {
   _stores_app__WEBPACK_IMPORTED_MODULE_4__["default"].dispatch(Object(_actions_app__WEBPACK_IMPORTED_MODULE_6__["setAddonsStatus"])(addons));
-});
+}); // When app loads send the request to get addon information.
+
 electron__WEBPACK_IMPORTED_MODULE_5___default.a.ipcRenderer.send('get-addons', {});
 
 /***/ }),
@@ -369,6 +396,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Addon__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Addon */ "./src/components/Addon.jsx");
 /* harmony import */ var _AddonListing__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./AddonListing */ "./src/components/AddonListing.jsx");
 /* harmony import */ var _Navbar__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Navbar */ "./src/components/Navbar.jsx");
+/* harmony import */ var _Install__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Install */ "./src/components/Install.jsx");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -393,6 +421,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var App =
 /*#__PURE__*/
 function (_React$Component) {
@@ -405,13 +434,27 @@ function (_React$Component) {
   }
 
   _createClass(App, [{
+    key: "content",
+    value: function content() {
+      if (typeof this.props.installation_folder !== "undefined" && this.props.installation_folder !== '') {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_AddonListing__WEBPACK_IMPORTED_MODULE_3__["default"], {
+          addons: this.props.addons
+        });
+      }
+
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Install__WEBPACK_IMPORTED_MODULE_5__["Install"], null);
+    }
+  }, {
     key: "render",
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Navbar__WEBPACK_IMPORTED_MODULE_4__["default"], {
         brand: "WoWBench"
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_AddonListing__WEBPACK_IMPORTED_MODULE_3__["default"], {
-        addons: this.props.addons
-      }));
+      }), this.content());
+    }
+  }, {
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      console.log('react has mounted app');
     }
   }]);
 
@@ -421,11 +464,88 @@ function (_React$Component) {
 
 var mapState = function mapState(state) {
   return {
-    addons: state.addons
+    addons: state.addons,
+    installation_folder: state.installation_folder
   };
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["connect"])(mapState)(App));
+
+/***/ }),
+
+/***/ "./src/components/Install.jsx":
+/*!************************************!*\
+  !*** ./src/components/Install.jsx ***!
+  \************************************/
+/*! exports provided: Install */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Install", function() { return Install; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _actions_types_app__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../actions/types/app */ "./src/actions/types/app.js");
+/* harmony import */ var _actions_app__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../actions/app */ "./src/actions/app.js");
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+
+var Install =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(Install, _React$Component);
+
+  function Install() {
+    _classCallCheck(this, Install);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(Install).apply(this, arguments));
+  }
+
+  _createClass(Install, [{
+    key: "change",
+    value: function change() {
+      var sel = document.getElementById('directorySelector');
+      var folder = sel.files[0].path;
+
+      if (folder.match(/.DS_Store/)) {
+        folder = folder.replace('.DS_Store', '');
+      }
+
+      console.log(folder);
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var folderSelect = react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("input", {
+        id: "directorySelector",
+        type: "file",
+        webkitdirectory: "",
+        onChange: this.change
+      });
+      return react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("h1", null, "Welcome"), react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("p", null, "In order to start, please locate the World of Warcraft installation folder (the folder containing one or more _classic_ or _retail_ folders)."), folderSelect);
+    }
+  }]);
+
+  return Install;
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
 
 /***/ }),
 
