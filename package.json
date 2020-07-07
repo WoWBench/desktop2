@@ -18,7 +18,7 @@
   "author": "davidcraig",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^7.1.4",
+    "electron": "^7.2.4",
     "webpack": "^4.41.3",
     "webpack-cli": "^3.3.10"
   },
